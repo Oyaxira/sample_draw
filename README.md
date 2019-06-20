@@ -1,11 +1,12 @@
 # README
-这是一个简单的你画我猜项目,基于Konva,Rails 5实现
-websocket使用rails自带的actioncable
-安装redis
-bundle
-yarn
-bundle exec rails db:migrate
-rails s
+#### 这是一个简单的你画我猜项目,基于Konva,Rails 5实现
+#### websocket使用rails自带的actioncable
+#### 使用方式
+* 安装redis
+* bundle
+* yarn
+* bundle exec rails db:migrate
+* rails s
 
 # 项目依赖
 
