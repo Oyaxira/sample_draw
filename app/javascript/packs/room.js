@@ -7,6 +7,8 @@ import "./components/room.scss"
 
 // }).call(this);
 var $ = require('jquery')
+let layer;
+let isStarted = false
 import Konva from 'konva'
 let mode = "huabi"
 let isMain = false
@@ -19,7 +21,7 @@ function gHuaban(){
     height: sHeight
   });
   console.log(stage)
-  let layer = new Konva.Layer();
+  layer = new Konva.Layer();
   stage.add(layer);
   let canvas = document.createElement('canvas');
   canvas.width = stage.width();
@@ -113,13 +115,34 @@ $(document).ready(function () {
           $(".show-container").children().remove()
           $(".show-container").append(image)
         }
-      } else {
+      } else if (data.type == "endDraw") {
+        let message = "有人结束了画画"
+        isStarted = false
+        $(".show-container").children().remove()
+        $(".show-container").hide()
+        $(".draw-container").hide()
+        $(".main-container").show()
+        let scrollDiv = document.createElement('div')
+        scrollDiv.className = "speak-item"
+        scrollDiv.textContent = message
+        document.getElementById('speaker').appendChild(scrollDiv)
+        $('#speaker').scrollTop($('#speaker')[0].scrollHeight)
+      } else{
         let message = ""
         if (data.type == "newMessage") {
           message = data.data
-        } else if (data.type == "startDraw") {
+        } else if (data.type == "startDraw" && !isStarted) {
           message = "有人开始画画啦"
+          isStarted = true
           !isMain && gShowBan()
+          if (data.img){
+            let image = document.createElement('img')
+            image.src = JSON.parse(data.img).img
+            image.style = "width:100%;height:100%"
+            $(".show-container").children().remove()
+            $(".show-container").append(image)
+          }
+
         }
         let scrollDiv = document.createElement('div')
         scrollDiv.className = "speak-item"
@@ -150,9 +173,20 @@ $(document).ready(function () {
 
   $("#draw-tool").on("click",".tool", function(event){
     let name = $(this).data("name")
-    $("#draw-tool .tool").removeClass("selected")
-    $(this).addClass("selected")
-    mode = name
+    if(name == "clear"){
+      gHuaban()
+      let img = layer.toDataURL({
+        mimeType: "image/jpeg",
+        quality: 1,
+        pixelRatio: 0.5,
+      })
+      App.chatChannel.broadcastJpg(img);
+    }else{
+      $("#draw-tool .tool").removeClass("selected")
+      $(this).addClass("selected")
+      mode = name
+    }
+
   })
 
   $("body").on('keypress', 'input.talk', (event) => {
@@ -166,6 +200,7 @@ $(document).ready(function () {
   $("#start-draw").on("click", function () {
     App.chatChannel.startDraw();
     isMain = true
+    isStarted = true
     $(".main-container").hide()
     $(".draw-container").show()
     gHuaban()
