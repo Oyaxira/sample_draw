@@ -1,24 +1,44 @@
 # README
+这是一个简单的你画我猜项目,基于Konva,actioncable实现
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+项目依赖
 
-Things you may want to cover:
+* Ruby version 2.4.1
 
-* Ruby version
+* redis
 
-* System dependencies
+* node v 8.15.0
 
-* Configuration
+* yarn 1.13.0
 
-* Database creation
+feature
 
-* Database initialization
+* 聊天表情
 
-* How to run the test suite
+* 分配房间
 
-* Services (job queues, cache servers, search engines, etc.)
+* 画图系统优化,加入更多颜色画笔
 
-* Deployment instructions
+* 优化画图同步逻辑,改善卡顿
 
-* ...
+* 用device实现一个成熟账号系统
+
+* 账号积分
+
+* 历史绘画
+
+* 分类词库可选词库更多词库自定义词库
+
+已实现
+
+* 简单聊天系统
+
+* 分配房间
+
+* 简单画画系统
+
+* 简单词库
+
+* 简单账号系统(非安全)
+
+* 可以基本游戏
