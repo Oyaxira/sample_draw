@@ -158,7 +158,7 @@ $(document).ready(function () {
         document.getElementById('speaker').appendChild(scrollDiv)
         $('#speaker').scrollTop($('#speaker')[0].scrollHeight)
         if (data.is_finished){
-          finishedGame()
+          finishedGame(data.finish_name)
         }
       }
     },
@@ -203,7 +203,7 @@ $(document).ready(function () {
   })
 
   $("body").on('keypress', 'input.talk', (event) => {
-    if (event.keyCode == 13) {
+    if (event.keyCode == 13 && !!event.target.value) {
       App.chatChannel.speak(event.target.value)
       event.target.value = ""
       event.preventDefault()
@@ -225,10 +225,10 @@ $(document).ready(function () {
 })
 
 
-function finishedGame() {
+function finishedGame(name) {
   let scrollDiv = document.createElement('div')
   scrollDiv.className = "speak-item"
-  scrollDiv.textContent = "有人猜出了答案,游戏结束"
+  scrollDiv.textContent = name + "猜出了答案,游戏结束"
   document.getElementById('speaker').appendChild(scrollDiv)
   $('#speaker').scrollTop($('#speaker')[0].scrollHeight)
   $(".main-container").show()

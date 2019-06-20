@@ -1,5 +1,8 @@
 class RoomController < ApplicationController
   def index
+    # if cookies.encrypted[:user].nil?
+    #   cookies.encrypted[:user] = "游客"
+    # end
   end
 
   def question

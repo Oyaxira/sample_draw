@@ -7,6 +7,15 @@
   text-align: center;
   padding-top: 20px;
   border-top: 1px solid #3c3c3c;
+
+  .loged-block {
+    position: absolute;
+    left: 0;
+  }
+  .login-block {
+    position: absolute;
+    left: 0;
+  }
   input.talk {
     width: 70%;
     height: 30px;

@@ -40,10 +40,15 @@ class ChatChannel < ApplicationCable::Channel
     else
       question = Redis::Value.new("chat_1_question").value
       is_finished = question.present? && data["message"] == question
+      msg = data['message']
+      if current_user.present?
+        msg = "#{current_user}：#{msg}"
+      end
       message = {
         type: "newMessage",
-        data: data["message"],
-        is_finished: is_finished
+        data: msg,
+        is_finished: is_finished,
+        finish_name: current_user
       }
       ActionCable.server.broadcast("chat_#{params[:room]}", message)
       if is_finished
