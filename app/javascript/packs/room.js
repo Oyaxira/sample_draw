@@ -8,34 +8,9 @@ import "./components/room.scss"
 // }).call(this);
 var $ = require('jquery')
 import Konva from 'konva'
-
-$(document).ready(function () {
-  App.chatChannel = App.cable.subscriptions.create({
-    channel: "ChatChannel",
-    room: "1"
-  }, {
-    received: (data) => {
-      let scrollDiv = document.createElement('div')
-      scrollDiv.className = "speak-item"
-      console.log(data)
-      scrollDiv.textContent = data.message
-      document.getElementById('speaker').appendChild(scrollDiv)
-      $('#speaker').scrollTop($('#speaker')[0].scrollHeight)
-    },
-    speak: function (messages) {
-      this.perform('speak', {
-        message: messages
-      })
-    }
-  })
-
-  $("body").on('keypress', 'input.talk', (event) => {
-    if (event.keyCode == 13) {
-      App.chatChannel.speak(event.target.value)
-      event.target.value = ""
-      event.preventDefault()
-    }
-  })
+let mode = "huabi"
+let isMain = false
+function gHuaban(){
   let sWidth = $("#draw")[0].offsetWidth
   let sHeight = $("#draw")[0].offsetHeight
   let stage = new Konva.Stage({
@@ -47,25 +22,30 @@ $(document).ready(function () {
   let layer = new Konva.Layer();
   stage.add(layer);
   let canvas = document.createElement('canvas');
-  canvas.width = stage.width() / 2;
-  canvas.height = stage.height() / 2;
+  canvas.width = stage.width();
+  canvas.height = stage.height();
   console.log(canvas)
   let isPaint = false
 
   stage.addEventListener('mouseup touchend', function () {
     isPaint = false;
+    let img = layer.toDataURL({
+      mimeType: "image/jpeg",
+      quality: 1,
+      pixelRatio: 0.5,
+    })
+    console.log(layer.toJSON())
+    App.chatChannel.broadcastJpg(img);
   });
 
   let image = new Konva.Image({
     image: canvas,
-    x: stage.width() / 4,
-    y: stage.height() / 4,
+    x: 0,
+    y: 0,
     stroke: 'green',
     shadowBlur: 5
   });
   layer.add(image);
-  console.log(layer)
-  console.log(image)
   stage.draw();
 
   let context = canvas.getContext('2d');
@@ -83,15 +63,22 @@ $(document).ready(function () {
     if (!isPaint) {
       return;
     }
-    context.globalCompositeOperation = 'source-over';
+
+    if (mode == "huabi") {
+      context.globalCompositeOperation = 'source-over';
+      context.lineWidth = 5;
+    } else if (mode == "xiangpi") {
+      context.globalCompositeOperation = 'destination-out';
+      context.lineWidth = 10;
+    }
     context.beginPath();
 
-    var localPos = {
+    let localPos = {
       x: lastPointerPosition.x - image.x(),
       y: lastPointerPosition.y - image.y()
     };
     context.moveTo(localPos.x, localPos.y);
-    var pos = stage.getPointerPosition();
+    let pos = stage.getPointerPosition();
     localPos = {
       x: pos.x - image.x(),
       y: pos.y - image.y()
@@ -102,5 +89,86 @@ $(document).ready(function () {
 
     lastPointerPosition = pos;
     layer.batchDraw();
+
   });
+}
+
+function gShowBan(){
+  $(".main-container").hide()
+  $(".show-container").show()
+}
+
+$(document).ready(function () {
+  App.chatChannel = App.cable.subscriptions.create({
+    channel: "ChatChannel",
+    room: "1"
+  }, {
+    received: (data) => {
+      if (data.type == "broadcastJpg"){
+        if(!isMain){
+          let image = document.createElement('img')
+          image.src = data.data.img
+          image.style = "width:100%;height:100%"
+          document.getElementById('speaker')
+          $(".show-container").children().remove()
+          $(".show-container").append(image)
+        }
+      } else {
+        let message = ""
+        if (data.type == "newMessage") {
+          message = data.data
+        } else if (data.type == "startDraw") {
+          message = "有人开始画画啦"
+          !isMain && gShowBan()
+        }
+        let scrollDiv = document.createElement('div')
+        scrollDiv.className = "speak-item"
+        scrollDiv.textContent = message
+        document.getElementById('speaker').appendChild(scrollDiv)
+        $('#speaker').scrollTop($('#speaker')[0].scrollHeight)
+      }
+    },
+    speak: function (messages) {
+      this.perform('speak', {
+        message: messages
+      })
+    },
+    startDraw: function () {
+      this.perform('startDraw', {
+        user: "用户1"
+      })
+    },
+    broadcastJpg: function(img) {
+      this.perform('broadcastJpg', {
+        img: img
+      })
+    },
+    connected: function (data) {
+      this.perform("checkStatus",{})
+    }
+  })
+
+  $("#draw-tool").on("click",".tool", function(event){
+    let name = $(this).data("name")
+    $("#draw-tool .tool").removeClass("selected")
+    $(this).addClass("selected")
+    mode = name
+  })
+
+  $("body").on('keypress', 'input.talk', (event) => {
+    if (event.keyCode == 13) {
+      App.chatChannel.speak(event.target.value)
+      event.target.value = ""
+      event.preventDefault()
+    }
+  })
+
+  $("#start-draw").on("click", function () {
+    App.chatChannel.startDraw();
+    isMain = true
+    $(".main-container").hide()
+    $(".draw-container").show()
+    gHuaban()
+  })
+
 })
