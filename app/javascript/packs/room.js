@@ -9,6 +9,8 @@ import "./components/room.scss"
 var $ = require('jquery')
 let layer;
 let isStarted = false
+let debounceBoardcast;
+import debounce from 'lodash-es/debounce'
 import Konva from 'konva'
 import { finished } from "stream";
 let mode = "huabi"
@@ -35,11 +37,15 @@ function gHuaban(){
     isPaint = false;
     let img = layer.toDataURL({
       mimeType: "image/jpeg",
-      quality: 1,
+      quality: 0.2,
+      width: layer.width / 4,
+      height: layer.height /4,
       pixelRatio: 0.5,
     })
-    console.log(layer.toJSON())
-    App.chatChannel.broadcastJpg(img);
+    console.log(img)
+    // console.log(layer.toJSON())
+    // App.chatChannel.broadcastJpg(img);
+    debounceBoardcast(img)
   });
 
   let image = new Konva.Image({
@@ -134,7 +140,7 @@ $(document).ready(function () {
         if (data.type == "newMessage") {
           message = data.data
         } else if (data.type == "startDraw" && !isStarted) {
-          message = "有人开始画画啦"
+          message = "有人开始画画啦,可以猜了"
           isStarted = true
           !isMain && gShowBan()
           if (data.img){
@@ -167,7 +173,7 @@ $(document).ready(function () {
       })
     },
     broadcastJpg: function(img) {
-      this.perform('broadcastJpg', {
+      App.chatChannel.perform('broadcastJpg', {
         img: img
       })
     },
@@ -175,14 +181,16 @@ $(document).ready(function () {
       this.perform("checkStatus",{})
     }
   })
-
+  debounceBoardcast = debounce(App.chatChannel.broadcastJpg, 1500, {
+    maxWait: 5000
+  })
   $("#draw-tool").on("click",".tool", function(event){
     let name = $(this).data("name")
     if(name == "clear"){
       gHuaban()
       let img = layer.toDataURL({
         mimeType: "image/jpeg",
-        quality: 1,
+        quality: 0,
         pixelRatio: 0.5,
       })
       App.chatChannel.broadcastJpg(img);
@@ -225,6 +233,7 @@ function finishedGame() {
   $('#speaker').scrollTop($('#speaker')[0].scrollHeight)
   $(".main-container").show()
   $(".draw-container").hide()
+  $(".show-container").children().remove()
   $(".show-container").hide()
   isMain = false
   isStarted = false

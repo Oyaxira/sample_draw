@@ -8,6 +8,7 @@
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "jquery": "^3.4.1",
     "konva": "^3.3.3",
+    "lodash-es": "^4.17.11",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
