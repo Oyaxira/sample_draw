@@ -1,9 +1,17 @@
 # README
-这是一个简单的你画我猜项目,基于Konva,actioncable实现
+这是一个简单的你画我猜项目,基于Konva,Rails 5实现
+websocket使用rails自带的actioncable
+安装redis
+bundle
+yarn
+bundle exec rails db:migrate
+rails s
 
-项目依赖
+# 项目依赖
 
 * Ruby version 2.4.1
+
+* Ruby on Rails
 
 * redis
 
@@ -11,7 +19,7 @@
 
 * yarn 1.13.0
 
-feature
+# feature
 
 * 聊天表情
 
@@ -29,7 +37,7 @@ feature
 
 * 分类词库可选词库更多词库自定义词库
 
-已实现
+# 已实现
 
 * 简单聊天系统
 
