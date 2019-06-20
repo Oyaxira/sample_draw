@@ -18,7 +18,7 @@
 #speaker
 
 .bottom-talk
-  - if cookies.encrypted[:user].present?
+  - if cookies.encrypted[:id].present?
     .loged-block
       = "当前登录"
       = cookies.encrypted[:user]
@@ -31,3 +31,6 @@
 
 = stylesheet_pack_tag "room"
 = javascript_pack_tag "room"
+
+javascript:
+  window.current_user = "#{cookies.encrypted[:user]}"

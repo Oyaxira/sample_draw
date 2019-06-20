@@ -9,6 +9,7 @@ class UsersController < ApplicationController
     @user = User.new(data)
     if @user.save
       cookies.encrypted[:user] = @user.name
+      cookies.encrypted[:id] = @user.id
       redirect_to room_path
     else
       flash[:error] = "Something went wrong"
@@ -28,6 +29,7 @@ class UsersController < ApplicationController
     user = User.find_by_name(data[:name])
     if user.password == data[:password]
       cookies.encrypted[:user] = user.name
+      cookies.encrypted[:id] = user.id
       redirect_to room_path
     end
   end
@@ -38,6 +40,7 @@ class UsersController < ApplicationController
 
   def logout
     cookies.encrypted[:user] = nil
+    cookies.encrypted[:id] = nil
     redirect_to room_path
   end
 

@@ -140,16 +140,21 @@ $(document).ready(function () {
         if (data.type == "newMessage") {
           message = data.data
         } else if (data.type == "startDraw" && !isStarted) {
-          message = "有人开始画画啦,可以猜了"
-          isStarted = true
-          !isMain && gShowBan()
-          if (data.img){
-            let image = document.createElement('img')
-            image.src = JSON.parse(data.img).img
-            image.style = "width:100%;height:100%"
-            $(".show-container").children().remove()
-            $(".show-container").append(image)
+          message = data.user_name + "开始画画啦,可以猜了"
+          if(data.user_name != window.current_user){
+            isStarted = true
+            !isMain && gShowBan()
+            if (data.img) {
+              let image = document.createElement('img')
+              image.src = JSON.parse(data.img).img
+              image.style = "width:100%;height:100%"
+              $(".show-container").children().remove()
+              $(".show-container").append(image)
+            }
+          }else{
+            startDrawWork()
           }
+
 
         }
         let scrollDiv = document.createElement('div')
@@ -211,19 +216,22 @@ $(document).ready(function () {
   })
 
   $("#start-draw").on("click", function () {
-    App.chatChannel.startDraw();
-    isMain = true
-    isStarted = true
-    $(".main-container").hide()
-    $(".draw-container").show()
-    gHuaban()
-    $.get("/room/question").then((data)=>{
-      alert("题目是"+data.question)
-    })
+    startDrawWork()
   })
 
 })
 
+function startDrawWork(){
+  App.chatChannel.startDraw();
+  isMain = true
+  isStarted = true
+  $(".main-container").hide()
+  $(".draw-container").show()
+  gHuaban()
+  $.get("/room/question").then((data) => {
+    alert("题目是" + data.question)
+  })
+}
 
 function finishedGame(name) {
   let scrollDiv = document.createElement('div')

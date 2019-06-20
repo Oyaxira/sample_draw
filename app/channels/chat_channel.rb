@@ -23,7 +23,8 @@ class ChatChannel < ApplicationCable::Channel
     if Redis::Value.new("chat_#{params[:room]}").value == "started"
       message = {
         type: "startDraw",
-        img: Redis::Value.new("chat_#{params[:room]}_last_draw").value
+        img: Redis::Value.new("chat_#{params[:room]}_last_draw").value,
+        user_name: current_user
       }
       ActionCable.server.broadcast("chat_#{params[:room]}", message)
     end
@@ -61,7 +62,8 @@ class ChatChannel < ApplicationCable::Channel
 
   def startDraw(data)
     message = {
-      type: "startDraw"
+      type: "startDraw",
+      user_name: current_user
     }
     ActionCable.server.broadcast("chat_#{params[:room]}", message)
     Redis::Value.new("chat_#{params[:room]}").value = "started"
