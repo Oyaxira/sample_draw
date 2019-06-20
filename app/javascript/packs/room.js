@@ -10,8 +10,10 @@ var $ = require('jquery')
 let layer;
 let isStarted = false
 import Konva from 'konva'
+import { finished } from "stream";
 let mode = "huabi"
 let isMain = false
+
 function gHuaban(){
   let sWidth = $("#draw")[0].offsetWidth
   let sHeight = $("#draw")[0].offsetHeight
@@ -149,6 +151,9 @@ $(document).ready(function () {
         scrollDiv.textContent = message
         document.getElementById('speaker').appendChild(scrollDiv)
         $('#speaker').scrollTop($('#speaker')[0].scrollHeight)
+        if (data.is_finished){
+          finishedGame()
+        }
       }
     },
     speak: function (messages) {
@@ -204,6 +209,23 @@ $(document).ready(function () {
     $(".main-container").hide()
     $(".draw-container").show()
     gHuaban()
+    $.get("/room/question").then((data)=>{
+      alert("题目是"+data.question)
+    })
   })
 
 })
+
+
+function finishedGame() {
+  let scrollDiv = document.createElement('div')
+  scrollDiv.className = "speak-item"
+  scrollDiv.textContent = "有人猜出了答案,游戏结束"
+  document.getElementById('speaker').appendChild(scrollDiv)
+  $('#speaker').scrollTop($('#speaker')[0].scrollHeight)
+  $(".main-container").show()
+  $(".draw-container").hide()
+  $(".show-container").hide()
+  isMain = false
+  isStarted = false
+}

@@ -38,11 +38,19 @@ class ChatChannel < ApplicationCable::Channel
       }
       ActionCable.server.broadcast("chat_#{params[:room]}", message)
     else
+      question = Redis::Value.new("chat_1_question").value
+      is_finished = question.present? && data["message"] == question
       message = {
         type: "newMessage",
-        data: data["message"]
+        data: data["message"],
+        is_finished: is_finished
       }
       ActionCable.server.broadcast("chat_#{params[:room]}", message)
+      if is_finished
+        Redis::Value.new("chat_#{params[:room]}").value = nil
+        Redis::Value.new("chat_#{params[:room]}_last_draw").value = {}.to_json
+        Redis::Value.new("chat_1_question").value = nil
+      end
     end
   end
 
