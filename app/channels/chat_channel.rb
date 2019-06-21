@@ -13,6 +13,11 @@ class ChatChannel < ApplicationCable::Channel
     if count.value.to_i == 0
       Redis::Value.new("chat_#{params[:room]}").value = nil
     end
+    message = {
+      type: "enter",
+      message: "#{current_user}离开了房间, 当前人数(#{count.value})"
+    }
+    ActionCable.server.broadcast("chat_#{params[:room]}", message)
   end
 
   def receive(data)
@@ -28,6 +33,12 @@ class ChatChannel < ApplicationCable::Channel
       }
       ActionCable.server.broadcast("chat_#{params[:room]}", message)
     end
+    count = Redis::Value.new("chat_#{params[:room]}_member")
+    message = {
+      type: "enter",
+      message: "#{current_user}进入了房间, 当前人数(#{count.value})"
+    }
+    ActionCable.server.broadcast("chat_#{params[:room]}", message)
   end
 
   def speak(data)

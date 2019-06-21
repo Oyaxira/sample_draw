@@ -7,6 +7,7 @@ import "./components/room.scss"
 
 // }).call(this);
 var $ = require('jquery')
+// import ImageTracer from "imagetracerjs"
 let layer;
 let isStarted = false
 let debounceBoardcast;
@@ -28,6 +29,7 @@ function gHuaban(){
   layer = new Konva.Layer();
   stage.add(layer);
   let canvas = document.createElement('canvas');
+  canvas.id = "draw-canvas"
   canvas.width = stage.width();
   canvas.height = stage.height();
   console.log(canvas)
@@ -45,6 +47,12 @@ function gHuaban(){
     console.log(img)
     // console.log(layer.toJSON())
     // App.chatChannel.broadcastJpg(img);
+    // var imgd = ImageTracer.getImgdata($("canvas")[0]);
+    // console.log(imgd)
+    // var svgstr = ImageTracer.imagedataToSVG( imgd, { scale:5 } );
+    // console.log(svgstr)
+    // var svg = ImageTracer.appendSVGString(svgstr, 'svgcontainer')
+    // console.log(svg)
     debounceBoardcast(img)
   });
 
@@ -114,7 +122,13 @@ $(document).ready(function () {
     room: "1"
   }, {
     received: (data) => {
-      if (data.type == "broadcastJpg"){
+      if (data.type == "enter"){
+        let scrollDiv = document.createElement('div')
+        scrollDiv.className = "speak-item"
+        scrollDiv.textContent = data.message
+        document.getElementById('speaker').appendChild(scrollDiv)
+        $('#speaker').scrollTop($('#speaker')[0].scrollHeight)
+      }else if (data.type == "broadcastJpg"){
         if(!isMain){
           let image = document.createElement('img')
           image.src = data.data.img
@@ -126,6 +140,7 @@ $(document).ready(function () {
       } else if (data.type == "endDraw") {
         let message = "有人结束了画画"
         isStarted = false
+        isMain = false
         $(".show-container").children().remove()
         $(".show-container").hide()
         $(".draw-container").hide()

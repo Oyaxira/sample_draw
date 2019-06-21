@@ -6,6 +6,7 @@
     "@rails/webpacker": "^4.0.7",
     "actioncable": "^5.2.3",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
+    "imagetracerjs": "^1.2.5",
     "jquery": "^3.4.1",
     "konva": "^3.3.3",
     "lodash-es": "^4.17.11",
