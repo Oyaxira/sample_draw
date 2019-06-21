@@ -141,6 +141,8 @@ $(document).ready(function () {
           message = data.data
         } else if (data.type == "startDraw" && !isStarted) {
           message = data.user_name + "开始画画啦,可以猜了"
+          console.log(data.user_name)
+          console.log(window.current_user)
           if(data.user_name != window.current_user){
             isStarted = true
             !isMain && gShowBan()

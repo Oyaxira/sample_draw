@@ -24,7 +24,7 @@ class ChatChannel < ApplicationCable::Channel
       message = {
         type: "startDraw",
         img: Redis::Value.new("chat_#{params[:room]}_last_draw").value,
-        user_name: current_user
+        user_name: Redis::Value.new("chat_#{params[:room]}_last_drawer").value,
       }
       ActionCable.server.broadcast("chat_#{params[:room]}", message)
     end
@@ -38,6 +38,7 @@ class ChatChannel < ApplicationCable::Channel
         type: "endDraw"
       }
       ActionCable.server.broadcast("chat_#{params[:room]}", message)
+      Redis::Value.new("chat_#{params[:room]}_last_drawer").value = nil
     else
       question = Redis::Value.new("chat_1_question").value
       is_finished = question.present? && data["message"] == question
@@ -56,6 +57,7 @@ class ChatChannel < ApplicationCable::Channel
         Redis::Value.new("chat_#{params[:room]}").value = nil
         Redis::Value.new("chat_#{params[:room]}_last_draw").value = {}.to_json
         Redis::Value.new("chat_1_question").value = nil
+        Redis::Value.new("chat_#{params[:room]}_last_drawer").value = nil
       end
     end
   end
@@ -68,6 +70,7 @@ class ChatChannel < ApplicationCable::Channel
     ActionCable.server.broadcast("chat_#{params[:room]}", message)
     Redis::Value.new("chat_#{params[:room]}").value = "started"
     Redis::Value.new("chat_#{params[:room]}_last_draw").value = {}.to_json
+    Redis::Value.new("chat_#{params[:room]}_last_drawer").value = current_user
   end
 
   def broadcastJpg(img)
