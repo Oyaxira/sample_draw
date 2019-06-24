@@ -245,7 +245,7 @@ function startDrawWork(){
   $(".main-container").hide()
   $(".draw-container").show()
   gHuaban()
-  $.get("/room/question").then((data) => {
+  $.get("/room/question?room=1").then((data) => {
     alert("题目是" + data.question)
   })
 }

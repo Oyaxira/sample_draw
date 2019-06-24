@@ -51,7 +51,8 @@ class ChatChannel < ApplicationCable::Channel
       ActionCable.server.broadcast("chat_#{params[:room]}", message)
       Redis::Value.new("chat_#{params[:room]}_last_drawer").value = nil
     else
-      question = Redis::Value.new("chat_1_question").value
+      question_id = Redis::Value.new("chat_1_question").value
+      question = Word.find(question_id).name
       is_finished = question.present? && data["message"] == question
       msg = data['message']
       if current_user.present?
