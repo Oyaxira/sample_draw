@@ -1,0 +1,10 @@
+.sign-in-container
+  h1
+    | 登录
+  = simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
+    .form-inputs
+      = f.input :name, required: false, autofocus: true, label: "名字"
+      = f.input :password, required: false, input_html: { autocomplete: "current-password" }, label: "密码"
+      = f.input :remember_me, as: :boolean, label: "记住我" if devise_mapping.rememberable?
+      = f.button :submit, "登录", class: "submit-btn"
+  = render "users/shared/links"
