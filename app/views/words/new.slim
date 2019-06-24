@@ -1,0 +1,8 @@
+= simple_form_for @word do |f|
+  .label
+    = "名字"
+    = f.input :name
+  .label
+    = "提示"
+    = f.input :word_type
+  =  f.submit "提交"

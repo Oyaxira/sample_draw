@@ -1,0 +1,16 @@
+
+.to-create
+  = link_to  "新建词语",new_word_path
+
+table width="100%"
+  tr
+    th
+      = "名字"
+    th
+      = "类型/提示语"
+  - @words.each do |word|
+    tr
+      td style="text-align: center;"
+        = word.name
+      td style="text-align: center;"
+        = word.word_type

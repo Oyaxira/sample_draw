@@ -6,4 +6,5 @@ Rails.application.routes.draw do
   root to: "room#index"
   get "room", to: "room#index"
   get "room/question", to: "room#question"
+  resources :words
 end

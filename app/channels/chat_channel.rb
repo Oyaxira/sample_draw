@@ -1,21 +1,19 @@
 class ChatChannel < ApplicationCable::Channel
   def subscribed
     stream_from "chat_#{params[:room]}"
-    count = Redis::Value.new("chat_#{params[:room]}_member")
-    count.value = 0 if count.value.to_i < 0
-    count.value = count.value.to_i + 1
+    count = Redis::Set.new("chat_#{params[:room]}_member")
+    count.add current_user
   end
 
   def unsubscribed
-    count = Redis::Value.new("chat_#{params[:room]}_member")
-    count.value = count.value.to_i - 1
-    count.value = 0 if count.value.to_i < 0
-    if count.value.to_i == 0
+    count = Redis::Set.new("chat_#{params[:room]}_member")
+    count.delete current_user
+    if count.size == 0
       Redis::Value.new("chat_#{params[:room]}").value = nil
     end
     message = {
       type: "enter",
-      message: "#{current_user}离开了房间, 当前人数(#{count.value})"
+      message: "#{current_user}离开了房间, 当前人数(#{count.size})"
     }
     ActionCable.server.broadcast("chat_#{params[:room]}", message)
   end
@@ -25,7 +23,8 @@ class ChatChannel < ApplicationCable::Channel
   end
 
   def checkStatus(data)
-    if Redis::Value.new("chat_#{params[:room]}").value == "started"
+    status = Redis::Value.new("chat_#{params[:room]}")
+    if status.value == "started"
       message = {
         type: "startDraw",
         img: Redis::Value.new("chat_#{params[:room]}_last_draw").value,
@@ -33,10 +32,10 @@ class ChatChannel < ApplicationCable::Channel
       }
       ActionCable.server.broadcast("chat_#{params[:room]}", message)
     end
-    count = Redis::Value.new("chat_#{params[:room]}_member")
+    count = Redis::Set.new("chat_#{params[:room]}_member")
     message = {
       type: "enter",
-      message: "#{current_user}进入了房间, 当前人数(#{count.value})"
+      message: "#{current_user}进入了房间, 当前人数(#{count.size})"
     }
     ActionCable.server.broadcast("chat_#{params[:room]}", message)
   end
