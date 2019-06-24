@@ -12,7 +12,8 @@
       | 橡皮
     .tool data-name="clear"
       | 清除
-
+    .color
+      input.jscolor readonly="readonly" value="df4b26"
 .show-container.hide
 
 #speaker
@@ -31,6 +32,8 @@
 
 = stylesheet_pack_tag "room"
 = javascript_pack_tag "room"
+
+
 
 javascript:
   window.current_user = "#{cookies.encrypted[:user]}"

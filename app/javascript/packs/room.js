@@ -11,6 +11,7 @@ var $ = require('jquery')
 let layer;
 let isStarted = false
 let debounceBoardcast;
+let context
 import debounce from 'lodash-es/debounce'
 import Konva from 'konva'
 import { finished } from "stream";
@@ -66,9 +67,11 @@ function gHuaban(){
   layer.add(image);
   stage.draw();
 
-  let context = canvas.getContext('2d');
+  context = canvas.getContext('2d');
   context.strokeStyle = '#df4b26';
   context.lineJoin = 'round';
+  context.fillStyle = "#fff";
+  context.fillRect(0, 0, canvas.width, canvas.height);
   context.lineWidth = 5;
   let lastPointerPosition;
 
@@ -235,6 +238,10 @@ $(document).ready(function () {
   $("#start-draw").on("click", function () {
     startDrawWork()
   })
+
+  $(".color input").on("change",function(){
+    context.strokeStyle = "#" + this.value;
+  });
 
 })
 
