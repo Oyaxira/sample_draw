@@ -18,15 +18,15 @@
 #speaker
 
 .bottom-talk
-  - if cookies.encrypted[:id].present?
+  - if current_user.present?
     .loged-block
       = "当前登录"
-      = cookies.encrypted[:user]
-      = link_to "登出", logout_users_path, method: :post
+      = current_user.name
+      = link_to "登出", destroy_user_session_path, method: :delete
   - else
     .login-block
-      = link_to "登录" ,login_page_users_path
-      = link_to "注册", new_user_path
+      = link_to "登录" ,new_user_session_path
+      = link_to "注册", new_user_registration_path
   input.talk
 
 = stylesheet_pack_tag "room"

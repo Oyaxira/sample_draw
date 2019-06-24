@@ -1,13 +1,7 @@
 Rails.application.routes.draw do
+  devise_for :users, controllers: {registrations: 'users/registrations',sessions: 'users/sessions'}
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
-  root to: "home#index"
+  root to: "room#index"
   get "room", to: "room#index"
   get "room/question", to: "room#question"
-  resources :users do
-    collection do
-      post :login
-      get :login_page
-      post :logout
-    end
-  end
 end
