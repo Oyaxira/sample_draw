@@ -1,0 +1,9 @@
+.sign-in-container
+  h1
+    | 注册
+  = simple_form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f|
+    .form-inputs
+      = f.input :name, required: false, autofocus: true, label: "名字"
+      = f.input :password, required: false, input_html: { autocomplete: "new-password" }, label: "密码", hint: "建议六位以上"
+      = f.button :submit, "注册", class: "submit-btn"
+  = render "users/shared/links"

@@ -11,6 +11,9 @@
   .loged-block {
     position: absolute;
     left: 0;
+    a {
+      margin-right: 5px;
+    }
   }
   .login-block {
     position: absolute;
@@ -83,6 +86,9 @@ body {
       height: 100px;
       font-size: 40px;
     }
+  }
+  .else{
+    text-align: center;
   }
 }
 

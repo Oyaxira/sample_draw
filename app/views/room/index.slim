@@ -2,7 +2,6 @@
   .select-main
     button#start-draw
       | 开始画图
-
 .draw-container.hide
   #draw
   #draw-tool
@@ -24,6 +23,7 @@
       = "当前登录"
       = current_user.name
       = link_to "登出", destroy_user_session_path, method: :delete
+      = link_to "词库",words_path
   - else
     .login-block
       = link_to "登录" ,new_user_session_path
